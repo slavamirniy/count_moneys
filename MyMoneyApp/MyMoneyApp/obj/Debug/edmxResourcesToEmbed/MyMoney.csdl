@@ -1,0 +1,136 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Schema Namespace="MyMoneyModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+  <EntityType Name="Categories">
+    <Key>
+      <PropertyRef Name="CategoryId" />
+    </Key>
+    <Property Name="CategoryId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="CategoryName" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <NavigationProperty Name="Operations" Relationship="Self.FK_Operations_Categories" FromRole="Categories" ToRole="Operations" />
+  </EntityType>
+  <EntityType Name="Goals">
+    <Key>
+      <PropertyRef Name="GoalId" />
+    </Key>
+    <Property Name="GoalId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="UserId" Type="Int32" Nullable="false" />
+    <Property Name="GoalName" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="GoalSum" Type="Int32" />
+    <NavigationProperty Name="GoalsOperations" Relationship="Self.FK_GoalsOperations_Goals" FromRole="Goals" ToRole="GoalsOperations" />
+  </EntityType>
+  <EntityType Name="GoalsOperations">
+    <Key>
+      <PropertyRef Name="GoalOperationId" />
+    </Key>
+    <Property Name="GoalOperationId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="OperationId" Type="Int32" Nullable="false" />
+    <Property Name="Comment" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="GoalId" Type="Int32" Nullable="false" />
+    <NavigationProperty Name="Goals" Relationship="Self.FK_GoalsOperations_Goals" FromRole="GoalsOperations" ToRole="Goals" />
+    <NavigationProperty Name="Operations" Relationship="Self.FK_GoalsOperations_Operations" FromRole="GoalsOperations" ToRole="Operations" />
+  </EntityType>
+  <EntityType Name="Operations">
+    <Key>
+      <PropertyRef Name="OperationId" />
+    </Key>
+    <Property Name="OperationId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="CategoryId" Type="Int32" />
+    <Property Name="UserId" Type="Int32" />
+    <Property Name="OperationName" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="Money" Type="Int32" Nullable="false" />
+    <Property Name="OperationDate" Type="DateTime" Precision="0" />
+    <NavigationProperty Name="Categories" Relationship="Self.FK_Operations_Categories" FromRole="Operations" ToRole="Categories" />
+    <NavigationProperty Name="GoalsOperations" Relationship="Self.FK_GoalsOperations_Operations" FromRole="Operations" ToRole="GoalsOperations" />
+    <NavigationProperty Name="Users" Relationship="Self.FK_Operations_Users" FromRole="Operations" ToRole="Users" />
+  </EntityType>
+  <EntityType Name="sysdiagrams">
+    <Key>
+      <PropertyRef Name="diagram_id" />
+    </Key>
+    <Property Name="name" Type="String" MaxLength="128" FixedLength="false" Unicode="true" Nullable="false" />
+    <Property Name="principal_id" Type="Int32" Nullable="false" />
+    <Property Name="diagram_id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="version" Type="Int32" />
+    <Property Name="definition" Type="Binary" MaxLength="Max" FixedLength="false" />
+  </EntityType>
+  <EntityType Name="Users">
+    <Key>
+      <PropertyRef Name="UserId" />
+    </Key>
+    <Property Name="UserId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="UserName" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <NavigationProperty Name="Operations" Relationship="Self.FK_Operations_Users" FromRole="Users" ToRole="Operations" />
+  </EntityType>
+  <Association Name="FK_Operations_Categories">
+    <End Role="Categories" Type="Self.Categories" Multiplicity="0..1" />
+    <End Role="Operations" Type="Self.Operations" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Categories">
+        <PropertyRef Name="CategoryId" />
+      </Principal>
+      <Dependent Role="Operations">
+        <PropertyRef Name="CategoryId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_GoalsOperations_Goals">
+    <End Role="Goals" Type="Self.Goals" Multiplicity="1" />
+    <End Role="GoalsOperations" Type="Self.GoalsOperations" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Goals">
+        <PropertyRef Name="GoalId" />
+      </Principal>
+      <Dependent Role="GoalsOperations">
+        <PropertyRef Name="GoalId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_GoalsOperations_Operations">
+    <End Role="Operations" Type="Self.Operations" Multiplicity="1" />
+    <End Role="GoalsOperations" Type="Self.GoalsOperations" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Operations">
+        <PropertyRef Name="OperationId" />
+      </Principal>
+      <Dependent Role="GoalsOperations">
+        <PropertyRef Name="OperationId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Operations_Users">
+    <End Role="Users" Type="Self.Users" Multiplicity="0..1" />
+    <End Role="Operations" Type="Self.Operations" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Users">
+        <PropertyRef Name="UserId" />
+      </Principal>
+      <Dependent Role="Operations">
+        <PropertyRef Name="UserId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <EntityContainer Name="MyMoneyEntities3" annotation:LazyLoadingEnabled="true">
+    <EntitySet Name="Categories" EntityType="Self.Categories" />
+    <EntitySet Name="Goals" EntityType="Self.Goals" />
+    <EntitySet Name="GoalsOperations" EntityType="Self.GoalsOperations" />
+    <EntitySet Name="Operations" EntityType="Self.Operations" />
+    <EntitySet Name="sysdiagrams" EntityType="Self.sysdiagrams" />
+    <EntitySet Name="Users" EntityType="Self.Users" />
+    <AssociationSet Name="FK_Operations_Categories" Association="Self.FK_Operations_Categories">
+      <End Role="Categories" EntitySet="Categories" />
+      <End Role="Operations" EntitySet="Operations" />
+    </AssociationSet>
+    <AssociationSet Name="FK_GoalsOperations_Goals" Association="Self.FK_GoalsOperations_Goals">
+      <End Role="Goals" EntitySet="Goals" />
+      <End Role="GoalsOperations" EntitySet="GoalsOperations" />
+    </AssociationSet>
+    <AssociationSet Name="FK_GoalsOperations_Operations" Association="Self.FK_GoalsOperations_Operations">
+      <End Role="Operations" EntitySet="Operations" />
+      <End Role="GoalsOperations" EntitySet="GoalsOperations" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Operations_Users" Association="Self.FK_Operations_Users">
+      <End Role="Users" EntitySet="Users" />
+      <End Role="Operations" EntitySet="Operations" />
+    </AssociationSet>
+  </EntityContainer>
+</Schema>
